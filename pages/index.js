@@ -1,118 +1,136 @@
-import Image from 'next/image'
-import { Inter } from 'next/font/google'
+import Image from "next/image";
+import { Inter } from "next/font/google";
+import { OnRun } from "@/api/api";
+import { useState, useEffect } from "react";
+const inter = Inter({ subsets: ["latin"] });
+import UserContext from "@/context/userContext";
+import React, { useContext } from 'react';
 
-const inter = Inter({ subsets: ['latin'] })
-
+import axios from "axios";
 export default function Home() {
+  const [imageCaptcha, setImageCaptcha] = useState(null);
+  const [encrypted_response, setEncrypted_response] = useState(null);
+  const [mobile, setMobile] = useState(null);
+  const [captcha, setCaptcha] = useState(null);
+  const [code, setCode] = useState('');
+  const { value, setValue } = useContext(UserContext);
+
+
+  const [step, setStep] = useState(1);
+
+  const handleCaptcha = () => {
+    axios.get(OnRun + "/authentication/captcha").then((response) => {
+      setImageCaptcha(response.data.image);
+      setEncrypted_response(response.data.encrypted_response);
+    });
+  };
+
+  const handleSubmit = () => {
+    if (step==1) {
+      axios
+        .post(OnRun + "/authentication/mobileverification", {
+          mobile: mobile,
+          captcha: captcha,
+          encrypted_response: encrypted_response,
+        })
+        .then((response) => {
+          setStep(2);
+        })
+        .catch((erorr) => {
+          alert(erorr.response.data.message);
+        });
+    }else{
+      axios.post(OnRun+'/authentication/otp',{mobile:mobile, code:code})
+      .then(response=>{
+        console.log(response.data)
+      })
+      .catch(erorr=>{
+        alert(erorr.response.data.message)
+      })
+    }
+  };
+
+  console.log(step);
+
+  useEffect(handleCaptcha, []);
+
   return (
-    <main
-      className={`flex min-h-screen flex-col items-center justify-between p-24 ${inter.className}`}
-    >
-      <div className="z-10 w-full max-w-5xl items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">pages/index.js</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
+    <section className="flex justify-center items-center h-screen bg-gray-100 rtl">
+      <div className="max-w-md w-full bg-white rounded p-6 space-y-4">
+        <div className="mb-4">
+          <p className="text-gray-600">فراسایت</p>
+          <h2 className="text-xl font-bold">ورود مدیریت</h2>
+        </div>
+        <div>
+          <input
+            disabled={step == 2}
+            value={mobile}
+            onChange={(e) => setMobile(e.target.value)}
+            className="w-full p-4 text-sm bg-gray-50 focus:outline-none border border-gray-200 rounded text-gray-600"
+            type="text"
+            placeholder="شماره همراه"
+          />
+        </div>
+        {step == 1 ? (
+          <>
+            <div>
+              <input
+                value={captcha}
+                onChange={(e) => setCaptcha(e.target.value)}
+                className="w-full p-4 text-sm bg-gray-50 focus:outline-none border border-gray-200 rounded text-gray-600"
+                type="text"
+                placeholder="کد کپچا"
+              />
+            </div>
+            <div>
+              {imageCaptcha ? (
+                <img
+                onClick={handleCaptcha}
+                src={`data:image/png;base64,${imageCaptcha}`}
+                className="w-full p-4 text-sm bg-gray-50 focus:outline-none border border-gray-200 rounded text-gray-600"
+                type="text"
+                placeholder="کد کپچا"
+                />
+              ) : null}
+            </div>
+          </>
+        ) : 
+        
+                <div>
+                  <input
+                    value={code}
+                    onChange={(e) => setCode(e.target.value)}
+                    className="w-full p-4 text-sm bg-gray-50 focus:outline-none border border-gray-200 rounded text-gray-600"
+                    type="text"
+                    placeholder="کد تایید"
+                  />
+                </div>
+        
+        
+        }
+        <div>
+          <button
+            onClick={handleSubmit}
+            className="w-full py-4 bg-blue-600 hover:bg-blue-700 rounded text-sm font-bold text-gray-50 transition duration-200"
           >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
+            تایید
+          </button>
+        </div>
+        <div className="flex items-center justify-between">
+          <div className="flex flex-row items-center">
+            <input
+              type="checkbox"
+              className="focus:ring-blue-500 h-4 w-4 text-blue-600 border-gray-300 rounded"
             />
-          </a>
+            <label
+              htmlFor="comments"
+              className="ml-2 text-sm font-normal text-gray-600"
+            >
+              مرا نگهدار
+            </label>
+          </div>
         </div>
       </div>
-
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700/10 after:dark:from-sky-900 after:dark:via-[#0141ff]/40 before:lg:h-[360px]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
-      <div className="mb-32 grid text-center lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
-
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Discover and deploy boilerplate example Next.js&nbsp;projects.
-          </p>
-        </a>
-
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=default-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
+    </section>
+  );
 }
