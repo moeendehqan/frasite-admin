@@ -4,16 +4,18 @@ import { OnRun } from "@/api/api";
 import { useState, useEffect } from "react";
 const inter = Inter({ subsets: ["latin"] });
 import UserContext from "@/context/userContext";
-import React, { useContext } from 'react';
+import { useContext } from 'react';
+import { useRouter } from 'next/router';
 
 import axios from "axios";
 export default function Home() {
   const [imageCaptcha, setImageCaptcha] = useState(null);
   const [encrypted_response, setEncrypted_response] = useState(null);
-  const [mobile, setMobile] = useState(null);
-  const [captcha, setCaptcha] = useState(null);
+  const [mobile, setMobile] = useState('');
+  const [captcha, setCaptcha] = useState('');
   const [code, setCode] = useState('');
   const { value, setValue } = useContext(UserContext);
+  const router = useRouter();
 
 
   const [step, setStep] = useState(1);
@@ -42,7 +44,9 @@ export default function Home() {
     }else{
       axios.post(OnRun+'/authentication/otp',{mobile:mobile, code:code})
       .then(response=>{
-        console.log(response.data)
+        setValue(response.data._id)
+        router.push('/panel')
+        
       })
       .catch(erorr=>{
         alert(erorr.response.data.message)
@@ -50,7 +54,6 @@ export default function Home() {
     }
   };
 
-  console.log(step);
 
   useEffect(handleCaptcha, []);
 
