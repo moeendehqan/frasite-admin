@@ -1,30 +1,55 @@
+import { OnRun } from "@/api/api";
+import UserContext from "@/context/userContext";
 import {
   DocumentArrowDownIcon,
   PhotoIcon,
   UserCircleIcon,
 } from "@heroicons/react/24/solid";
-import { useState } from "react";
+import axios from "axios";
+import { useContext, useEffect, useState } from "react";
 
 const Information = () => {
-  const [data, setData] = useState();
-  const Data = [
-    { name: " نام:", value: "حسن روحانی" },
-    { name: " تلفن:", value: "0999000999 " },
-    { name: "adr:", value: "0999000999 " },
-    { name: "  شناسه‌ ملی:", value: "90002349 " },
-    { name: "  کلمه کلیدی:", value: "hsA1 " },
-    {
-      name: "  درباره ما:",
-      value:
-        "  lorem fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsumaliquip consequat sint. Sit id mollit nulla mollit nostrud in eaofficia proident. Irure nostrud pariatur mollit ad adipisicingreprehenderit deserunt qui eu.",
-    },
-    {
-      name: "  توضیحات :",
-      value:
-        "  lorem fugiat ipsum ipsum deserunt culpa aute sint do nostrud anim incididunt cillum culpa consequat. Excepteur qui ipsumaliquip consequat sint. Sit id mollit nulla mollit nostrud in eaofficia proident. Irure nostrud pariatur mollit ad adipisicingreprehenderit deserunt qui eu.",
-    },
-  ];
-
+  const { value, setValue } = useContext(UserContext);
+  const [logo, setLogo] = useState(String || undefined);
+  const [name, setName] = useState(String || undefined);
+  const [domain, setDomain] = useState(String || undefined);
+  const [telePhone, setTelePhone] = useState(String || undefined);
+  const [address, setAddress] = useState(String || undefined);
+  const [nationalID, setNationalNumber] = useState(String || undefined);
+  const [about, setAbout] = useState(String || undefined);
+  const [socialMedia, setSocialMedia] = useState({});
+  const [theme, setTheme] = useState(Number);
+  const [catalog, setCatalog] = useState(String || undefined);
+  const [description, setDescription] = useState(String || undefined);
+  const [keyword, setKeyword] = useState(String || undefined);
+  const [data, setData] = useState({
+    id: "",
+    Logo: logo,
+    Name: name,
+    Domain: domain,
+    Telephone: telePhone,
+    Adress: address,
+    NationalID: nationalID,
+    Aboutus: about,
+    Socialmedia: socialMedia,
+    Theme: theme,
+    Catalog: catalog,
+    Description: description,
+    Keyword: keyword,
+  });
+  const getSetup = () => {
+    console.log("dataaaa isssss", data);
+    axios
+      .post(OnRun + "/information/setup", { _id: value, data })
+      .then((response) => {
+        setData(response.data);
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  };
+  console.log("logoooooo", data.Logo);
+  useEffect(getSetup, []);
   return (
     <>
       <div className=" bg-white rounded-lg m-5 p-10 shadow-lg">
@@ -32,7 +57,6 @@ const Information = () => {
           <h3 className="text-base font-semibold leading-7 text-gray-900">
             اطلاعات پایه
           </h3>
-          {/* <p className="mt-1 max-w-2xl text-sm leading-6 text-gray-500">لوگو</p> */}
         </div>
         <div className="mt-6 border-t border-gray-100">
           <dl className="divide-y divide-gray-100">
@@ -42,29 +66,141 @@ const Information = () => {
               </dt>
               <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
                 <div className="mt-2 flex items-center gap-x-3">
-                  <UserCircleIcon
-                    className="h-12 w-12 text-gray-300"
-                    aria-hidden="true"
-                  />
-                  <button
-                    type="button"
+                  <div className="flex items-center gap-x-6">
+                    <img
+                      className="h-16 w-16 rounded-full"
+                      src={data.Logo}
+                      alt=""
+                      id="Logo"
+                    />
+                  </div>
+                  <label
+                    htmlFor="file-upload"
                     className="rounded-md bg-white px-2.5 py-1.5 text-sm font-semibold text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 hover:bg-gray-50"
                   >
-                    Change
-                  </button>
+                    <span>تغییر عکس</span>
+                    <input
+                      id="Logo"
+                      name="file-upload"
+                      type="file"
+                      onChange={(e) => e.target.value(setLogo())}
+                      className="sr-only "
+                    />
+                  </label>
                 </div>
               </dd>
             </div>
-            {Data.map((item) => (
+            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <dt className="text-sm font-medium leading-6 text-gray-900">
+                <p>نام:</p>
+              </dt>
+              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <input
+                  type="text"
+                  id="first-name"
+                  value={name}
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
+                />
+              </dd>
+            </div>
+            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <dt className="text-sm font-medium leading-6 text-gray-900">
+                <p>تلفن:</p>
+              </dt>
+              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <input
+                  type="text"
+                  id="first-name"
+                  value={telePhone}
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
+                />
+              </dd>
+            </div>
+            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <dt className="text-sm font-medium leading-6 text-gray-900">
+                <p>دامین:</p>
+              </dt>
+              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <input
+                  type="text"
+                  id="first-name"
+                  value={domain}
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
+                />
+              </dd>
+            </div>
+            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <dt className="text-sm font-medium leading-6 text-gray-900">
+                <p> شناسه‌ ملی:</p>
+              </dt>
+              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <input
+                  type="text"
+                  id="first-name"
+                  value={nationalID}
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
+                />
+              </dd>
+            </div>
+            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <dt className="text-sm font-medium leading-6 text-gray-900">
+                <p> کلمه کلیدی:</p>
+              </dt>
+              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <input
+                  type="text"
+                  id="first-name"
+                  value={keyword}
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
+                />
+              </dd>
+            </div>
+            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <dt className="text-sm font-medium leading-6 text-gray-900">
+                <p> درباره ما:</p>
+              </dt>
+              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <textarea
+                  name="message"
+                  id="message"
+                  rows={3}
+                  value={about}
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
+                  defaultValue={""}
+                />
+              </dd>
+            </div>
+
+            <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
+              <dt className="text-sm font-medium leading-6 text-gray-900">
+                <p> توضیحات :</p>
+              </dt>
+              <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
+                <textarea
+                  name="message"
+                  id="message"
+                  rows={4}
+                  value={description}
+                  className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
+                  defaultValue={""}
+                />
+              </dd>
+            </div>
+            {/* {Data.map((item) => (
               <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                 <dt className="text-sm font-medium leading-6 text-gray-900">
                   {item.name}
                 </dt>
                 <dd className="mt-1 text-sm leading-6 text-gray-700 sm:col-span-2 sm:mt-0">
-                  {item.value}{" "}
+                  <input
+                    type="text"
+                    id="first-name"
+                    value={item.value}
+                    className="block w-full rounded-md border-0 px-3.5 py-2 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
+                  />
                 </dd>
               </div>
-            ))}
+            ))} */}
             <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
               <dt className="text-sm font-medium leading-6 text-gray-900">
                 تم
@@ -118,8 +254,11 @@ const Information = () => {
                       <path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37zM17.5 6.5h.01" />
                     </svg>
                     <input
-                      className="border-gray-300 px-1 shadow-sm rounded ring-1 ring-inset ring-gray-300"
+                      type="text"
+                      id="first-name"
                       placeholder="instagram @"
+                      value={socialMedia}
+                      className="block w-full rounded-md border-0 px-3.5 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
                     />
                   </div>
 
@@ -138,8 +277,12 @@ const Information = () => {
                       />
                     </svg>
                     <input
-                      className="border-gray-300 px-1 shadow-sm rounded ring-1 ring-inset ring-gray-300"
-                      placeholder="telegram @"
+                      type="text"
+                      id="first-name"
+                      placeholder="telegram@"
+                      value={socialMedia}
+                      onChange={(e) => e.target.value(setSocialMedia)}
+                      className="block w-full rounded-md border-0 px-3.5 py-1 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-gray-900 sm:text-sm sm:leading-6"
                     />
                   </div>
                 </div>
