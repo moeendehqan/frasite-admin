@@ -45,7 +45,7 @@ export default function Home() {
       axios.post(OnRun+'/authentication/otp',{mobile:mobile, code:code})
       .then(response=>{
         setValue(response.data._id)
-        router.push('/panel')
+        router.push('/panel/information')
         
       })
       .catch(erorr=>{

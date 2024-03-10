@@ -1,13 +1,11 @@
-import UserContext from "@/context/userContext";
-import axios from "axios";
-import { useRouter } from "next/router";
-import SideBar from "@/src/sidebar";
 import { OnRun , domin } from "@/api/api";
+import UserContext from "@/context/userContext";
+import { useRouter } from "next/router";
 import {
   DocumentArrowDownIcon,
 } from "@heroicons/react/24/solid";
+import axios from "axios";
 import { useContext, useEffect, useState } from "react";
-
 
 const Information = () => {
   const { value, setValue } = useContext(UserContext);
@@ -24,9 +22,25 @@ const Information = () => {
   const [description, setDescription] = useState('');
   const [keyword, setKeyword] = useState('');
 
+  const idVerify = () => {
+    if (value) {
+      axios
+        .post(OnRun + "/authentication/checkcookies", { _id: value })
+        .then((response) => {
+            response.status !== 200;
+        })
+        .catch((erorr) => {
+          router.push("/");
+        });
+        
+      }else{
+      router.push("/");
+
+    }
+  };
+  useEffect(idVerify, []);
 
   const router = useRouter();
-
 
   const Setup = () => {
     axios
@@ -52,32 +66,9 @@ const Information = () => {
         console.log(err);
       });
   };
-
-  const idVerify = () => {
-    if (value) {
-      axios
-        .post(OnRun + "/authentication/checkcookies", { _id: value })
-        .then((response) => {
-            response.status !== 200;
-        })
-        .catch((erorr) => {
-          router.push("/");
-        });
-        
-      }else{
-      router.push("/");
-
-    }
-  };
-  useEffect(idVerify, []);
-
+  useEffect(Setup, []);
   return (
     <>
-
-      <SideBar />
-      
-      <div className="mx-10 p-4 top-0 md:mr-64 sm:mr-80">
-      <>
       <div className=" bg-white rounded-lg m-5 p-10 shadow-lg">
         <div className="py-4 sm:px-0">
           <h3 className="text-base font-semibold leading-7 text-gray-900">
@@ -376,11 +367,6 @@ const Information = () => {
         </div>
       </div>
     </>
-
-      </div>
-    </>
   );
 };
-
-
 export default Information;
