@@ -81,7 +81,7 @@ const SideBar = ({ sidebarOpen, setSidebarOpen }) => {
               className="h-8 w-8"
             />
             <Typography variant="h5" color="blue-gray">
-              Sidebar
+              داشبورد
             </Typography>
           </div>
           <List>

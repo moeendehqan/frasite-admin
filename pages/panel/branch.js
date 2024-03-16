@@ -33,7 +33,15 @@ const Static = () => {
         Code: Code,
       })
       .then((response) => {
-        console.log(response);
+        console.log(response.data);
+        setTypes(response.data);
+        setDomain(response.data);
+        setTelephone(response.data);
+        setStatus(response.data);
+        setAddress(response.data);
+        setProvince(response.data);
+        setCity(response.data);
+        setCode(response.data);
       })
       .catch((err) => {
         console.log(err);
@@ -48,28 +56,35 @@ const Static = () => {
           response.status !== 200;
         })
         .catch((erorr) => {
-          router.push("/");
+          console.log(erorr);
+          // router.push("/");
         });
     } else {
-      router.push("/");
+      null
+      // router.push("/");
     }
   };
   useEffect(idVerify, []);
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+    Setup();
+    console.log(Setup());
+  };
 
   return (
     <>
       <SideBar />
 
-      <div className="mx-10 p-4 top-0 md:mr-64 sm:mr-80">
-        <>
-          <div className=" bg-white rounded-lg m-5 p-10 shadow-lg">
+      <div className="mx-5 px-4 top-0  md:mr-64 sm:mr-80 ">
+        <form onSubmit={handleSubmit}>
+          <div className=" bg-white rounded-lg m-5 w-full p-10 shadow-lg">
             <div className="py-4 sm:px-0">
               <h3 className="text-base font-semibold leading-7 text-gray-900">
                 شعب
               </h3>
               <button
-                onClick={Setup}
-                type="button"
+                // onClick={ }
+                type="submit"
                 className="focus:outline-none flex justify-end text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 ذخیره
@@ -104,7 +119,7 @@ const Static = () => {
                       onChange={(e) => setAddress(e.target.value)}
                     />
                   </dd>
-                </div>                
+                </div>
                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                   <dt className="text-sm font-medium leading-6 text-gray-900">
                     <p>استان:</p>
@@ -118,7 +133,7 @@ const Static = () => {
                       onChange={(e) => setProvince(e.target.value)}
                     />
                   </dd>
-                </div>                
+                </div>
                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                   <dt className="text-sm font-medium leading-6 text-gray-900">
                     <p>شهر:</p>
@@ -132,7 +147,7 @@ const Static = () => {
                       onChange={(e) => setCity(e.target.value)}
                     />
                   </dd>
-                </div>                
+                </div>
                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                   <dt className="text-sm font-medium leading-6 text-gray-900">
                     <p>کد:</p>
@@ -146,7 +161,7 @@ const Static = () => {
                       onChange={(e) => setCode(e.target.value)}
                     />
                   </dd>
-                </div>                
+                </div>
                 <div className="px-4 py-6 sm:grid sm:grid-cols-3 sm:gap-4 sm:px-0">
                   <dt className="text-sm font-medium leading-6 text-gray-900">
                     <p>تلفن:</p>
@@ -160,11 +175,11 @@ const Static = () => {
                       onChange={(e) => setTelephone(e.target.value)}
                     />
                   </dd>
-                </div>                
+                </div>
               </dl>
             </div>
           </div>
-        </>
+        </form>
       </div>
     </>
   );

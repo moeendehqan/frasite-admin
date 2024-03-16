@@ -3,17 +3,23 @@ import axios from "axios";
 import { useRouter } from "next/router";
 import SideBar from "@/src/sidebar";
 import { OnRun, domin } from "@/api/api";
-import { DocumentArrowDownIcon } from "@heroicons/react/24/solid";
 import { useContext, useEffect, useState } from "react";
 
 const Static = () => {
   const { value, setValue } = useContext(UserContext);
-  const [name, setName] = useState("تعداد سهام");
-  const [count, setCount] = useState("10000000 M");
+  const [name, setName] = useState();
+  const [count, setCount] = useState();
   const [domain, setDomain] = useState(domin);
   const [status, setStatus] = useState(true);
   const [icon, setIcon] = useState("");
-
+  const [data, setData] = useState({
+    _id: value,
+    Title: name,
+    Domain: domain,
+    Number: count,
+    Status: status,
+    Icon: icon || null,
+  });
   const router = useRouter();
 
   const Setup = () => {
@@ -24,10 +30,12 @@ const Static = () => {
         Domain: domain,
         Number: count,
         Status: status,
-        Icon: icon,
+        Icon: icon || null,
       })
       .then((response) => {
-        console.log(response);
+        setData(response.data);
+        console.log(setData(response.data));
+        // console.log(response.data);
       })
       .catch((err) => {
         console.log(err);
@@ -35,35 +43,42 @@ const Static = () => {
   };
 
   const idVerify = () => {
-    if (value) {
+    if (setValue!== null) {
       axios
         .post(OnRun + "/authentication/checkcookies", { _id: value })
         .then((response) => {
           response.status !== 200;
         })
         .catch((erorr) => {
-          router.push("/");
+          console.log(erorr);
+        
+          // router.push("/");
         });
     } else {
-      router.push("/");
+      null
+      // router.push("/");
     }
   };
   useEffect(idVerify, []);
 
+  // function handleSubmit(e) {
+  //   e.preventDefault();
+  //   Setup();
+  // }
+  console.log("data isss", Setup());
   return (
     <>
       <SideBar />
-
       <div className="mx-10 p-4 top-0 md:mr-64 sm:mr-80">
-        <>
+        <form onSubmit={Setup}>
           <div className=" bg-white rounded-lg m-5 p-10 shadow-lg">
             <div className="py-4 sm:px-0">
               <h3 className="text-base font-semibold leading-7 text-gray-900">
                 آمار
               </h3>
               <button
-                onClick={Setup}
-                type="button"
+
+                type="submit"
                 className="focus:outline-none flex justify-end text-white bg-green-700 hover:bg-green-800 focus:ring-4 focus:ring-green-300 font-medium rounded-lg text-sm px-5 py-2.5 me-2 mb-2 dark:bg-green-600 dark:hover:bg-green-700 dark:focus:ring-green-800"
               >
                 ذخیره
@@ -98,11 +113,11 @@ const Static = () => {
                       onChange={(e) => setCount(e.target.value)}
                     />
                   </dd>
-                </div>                
+                </div>
               </dl>
             </div>
           </div>
-        </>
+        </form>
       </div>
     </>
   );

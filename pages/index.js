@@ -62,7 +62,7 @@ export default function Home() {
       <div className="max-w-md w-full bg-white rounded p-6 space-y-4">
         <div className="mb-4">
           <p className="text-gray-600">فراسایت</p>
-          <h2 className="text-xl font-bold">ورود مدیریت</h2>
+          <h2 className="text-xl font-bold dark:text-black">ورود مدیریت</h2>
         </div>
         <div>
           <input
